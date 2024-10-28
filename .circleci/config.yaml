@@ -1,0 +1,126 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: cimg/node:lts
+    steps:
+      - checkout
+      - run:
+          name: Construir la aplicación
+          command: |
+            npm install
+
+  test:
+    docker:
+      - image: cimg/node:lts
+    steps:
+      - checkout
+      - run:
+          name: Ejecutar tests
+          command: |
+            npm test
+      - run:
+          name: Generar informe de cobertura
+          command: |
+            npm run coverage
+      - store_artifacts:
+          path: coverage
+          destination: informe-de-cobertura
+
+  lint:
+    docker:
+      - image: cimg/node:lts
+    steps:
+      - checkout
+      - run:
+          name: Ejecutar linting
+          command: |
+            npm run lint
+
+  analisis_estatico:
+    docker:
+      - image: cimg/node:lts
+    steps:
+      - checkout
+      - run:
+          name: Ejecutar análisis estático de código
+          command: |
+            # Suponiendo que uses SonarQube Scanner
+            npm install -g sonarqube-scanner
+            sonar-scanner
+
+  analisis_vulnerabilidades:
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Instalar GitGuardian CLI
+          command: |
+            pip install ggshield
+      - run:
+          name: Ejecutar análisis de vulnerabilidades con GitGuardian
+          command: |
+            ggshield scan repo .
+
+  generar_artefacto:
+    docker:
+      - image: cimg/node:lts
+    steps:
+      - checkout
+      - run:
+          name: Generar artefacto de la aplicación
+          command: |
+            npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build
+
+  publicar_artefacto:
+    docker:
+      - image: cimg/node:lts
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Publicar artefacto en el repositorio
+          command: |
+            # Comandos para publicar el artefacto
+            # Por ejemplo, subir a un bucket S3
+            aws s3 cp build s3://tu-repositorio-de-artefactos/build --recursive
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - lint:
+          requires:
+            - build
+      - analisis_estatico:
+          requires:
+            - build
+      - analisis_vulnerabilidades:
+          requires:
+            - build
+      - generar_artefacto:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - master
+                - main
+      - publicar_artefacto:
+          requires:
+            - generar_artefacto
+          filters:
+            branches:
+              only:
+                - master
+                - main
