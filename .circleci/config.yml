@@ -1,7 +1,8 @@
 version: 2.1
 
 orbs:
-  ggshield: gitguardian/ggshield@1.1.4  
+  ggshield: gitguardian/ggshield@1.4.1
+  sonarcloud: sonarsource/sonarcloud@2.0.0
 
 jobs:
   build:
@@ -10,7 +11,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Instalar dependencias
+          name: Install dependencies
           command: npm install
 
   test:
@@ -19,10 +20,10 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Instalar dependencias
+          name: Install dependencies
           command: npm install
       - run:
-          name: Ejecutar tests y generar cobertura
+          name: Run tests and generate coverage
           command: npm test
       - store_artifacts:
           path: coverage
@@ -34,56 +35,39 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Instalar dependencias
+          name: Install dependencies
           command: npm install
       - run:
-          name: Ejecutar linting
+          name: Run linting
           command: npm run lint
 
-  analisis_estatico:
+  generate_artifact:
     docker:
       - image: cimg/node:lts
     steps:
       - checkout
       - run:
-          name: Instalar dependencias
+          name: Install dependencies
           command: npm install
       - run:
-          name: Ejecutar análisis estático de código
-          command: |
-            npx sonarqube-scanner \
-              -Dsonar.projectKey=mi-app \
-              -Dsonar.sources=. \
-              -Dsonar.host.url=${SONAR_HOST_URL} \
-              -Dsonar.login=${SONAR_TOKEN}
-
-  generar_artefacto:
-    docker:
-      - image: cimg/node:lts
-    steps:
-      - checkout
-      - run:
-          name: Instalar dependencias
-          command: npm install
-      - run:
-          name: Generar artefacto de la aplicación
+          name: Build the application
           command: npm run build
       - persist_to_workspace:
           root: .
           paths:
             - .
 
-  publicar_artefacto:
+  publish_artifact:
     docker:
       - image: cimg/node:lts
     steps:
       - attach_workspace:
           at: .
       - run:
-          name: Publicar artefacto en el repositorio
+          name: Publish artifact
           command: |
-            echo "Publicando artefacto..."
-            # Reemplaza este comando con el necesario para publicar tu artefacto
+            echo "Publishing artifact..."
+            # Replace this with your actual publish commands
 
 workflows:
   build_and_deploy:
@@ -95,16 +79,17 @@ workflows:
       - lint:
           requires:
             - build
-      - analisis_estatico:
+      - sonarcloud/scan:
+          context: SonarCloud
           requires:
             - build
       - ggshield/scan:
-          name: ggshield-scan  
+          name: ggshield-scan
           base_revision: << pipeline.git.base_revision >>
           revision: << pipeline.git.revision >>
           requires:
             - build
-      - generar_artefacto:
+      - generate_artifact:
           requires:
             - test
           filters:
@@ -112,9 +97,9 @@ workflows:
               only:
                 - master
                 - main
-      - publicar_artefacto:
+      - publish_artifact:
           requires:
-            - generar_artefacto
+            - generate_artifact
           filters:
             branches:
               only:
