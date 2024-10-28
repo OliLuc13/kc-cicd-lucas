@@ -1,0 +1,22 @@
+{
+    "name": "mi-app",
+    "version": "1.0.0",
+    "description": "Aplicación de ejemplo para probar el pipeline de CI en CircleCI",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js",
+      "test": "jest --coverage",
+      "lint": "eslint .",
+      "build": "echo 'Construyendo la aplicación...'",
+      "coverage": "jest --coverage"
+    },
+    "author": "Tu Nombre",
+    "license": "MIT",
+    "dependencies": {},
+    "devDependencies": {
+      "eslint": "^8.30.0",
+      "jest": "^29.3.1",
+      "sonarqube-scanner": "^2.8.0"
+    }
+  }
+  

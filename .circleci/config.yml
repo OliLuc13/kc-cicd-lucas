@@ -7,9 +7,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Construir la aplicación
-          command: |
-            npm install
+          name: Instalar dependencias
+          command: npm install
 
   test:
     docker:
@@ -17,13 +16,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Ejecutar tests
-          command: |
-            npm test
-      - run:
-          name: Generar informe de cobertura
-          command: |
-            npm run coverage
+          name: Ejecutar tests y generar cobertura
+          command: npm test
       - store_artifacts:
           path: coverage
           destination: informe-de-cobertura
@@ -35,8 +29,7 @@ jobs:
       - checkout
       - run:
           name: Ejecutar linting
-          command: |
-            npm run lint
+          command: npm run lint
 
   analisis_estatico:
     docker:
@@ -46,9 +39,11 @@ jobs:
       - run:
           name: Ejecutar análisis estático de código
           command: |
-            # Suponiendo que uses SonarQube Scanner
-            npm install -g sonarqube-scanner
-            sonar-scanner
+            npx sonarqube-scanner \
+              -Dsonar.projectKey=mi-app \
+              -Dsonar.sources=. \
+              -Dsonar.host.url=${SONAR_HOST_URL} \
+              -Dsonar.login=${SONAR_TOKEN}
 
   analisis_vulnerabilidades:
     docker:
@@ -57,12 +52,10 @@ jobs:
       - checkout
       - run:
           name: Instalar GitGuardian CLI
-          command: |
-            pip install ggshield
+          command: pip install ggshield
       - run:
           name: Ejecutar análisis de vulnerabilidades con GitGuardian
-          command: |
-            ggshield scan repo .
+          command: ggshield scan repo .
 
   generar_artefacto:
     docker:
@@ -71,12 +64,11 @@ jobs:
       - checkout
       - run:
           name: Generar artefacto de la aplicación
-          command: |
-            npm run build
+          command: npm run build
       - persist_to_workspace:
           root: .
           paths:
-            - build
+            - .
 
   publicar_artefacto:
     docker:
@@ -87,9 +79,8 @@ jobs:
       - run:
           name: Publicar artefacto en el repositorio
           command: |
-            # Comandos para publicar el artefacto
-            # Por ejemplo, subir a un bucket S3
-            aws s3 cp build s3://tu-repositorio-de-artefactos/build --recursive
+            echo "Publicando artefacto..."
+            # Reemplaza este comando con el necesario para publicar tu artefacto
 
 workflows:
   version: 2
