@@ -51,12 +51,17 @@ jobs:
           command: npm install
       - run:
           name: Ejecutar análisis estático de código
-          command: |
-            npx sonarqube-scanner \
-              -Dsonar.projectKey=mi-app \
-              -Dsonar.sources=. \
-              -Dsonar.host.url=${SONAR_HOST_URL} \
-              -Dsonar.login=${SONAR_TOKEN}
+          command: npm run test:coverage
+      - sonarcloud/scan
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - store_test_results:
+          path: test-results.xml
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
 
   generar_artefacto:
     docker:
