@@ -64,7 +64,7 @@ jobs:
           command: pip install ggshield
       - run:
           name: Ejecutar análisis de vulnerabilidades con GitGuardian
-          command: ggshield secret scan --all-files
+          command: ggshield scan repo . --api-key $GITGUARDIAN_API_KEY
 
   generar_artefacto:
     docker:
