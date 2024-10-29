@@ -85,9 +85,19 @@ jobs:
           at: .
       - run:
           name: Publicar artefacto en el repositorio
-          command: |
-            echo "Publicando artefacto..."
-            # Reemplaza este comando con el necesario para publicar tu artefacto
+          command: '
+
+          echo "Using CircleCI built-in artifact storage to store artifacts."
+
+          '
+        name: Publicar artefacto en el repositorio
+      - store_artifacts:
+          destination: dist
+          path: ./dist
+      - store_artifacts:
+          destination: docs
+          path: ./docs
+
 
 workflows:
   build_and_deploy:
