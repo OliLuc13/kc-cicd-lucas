@@ -1,21 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mi-app
-  labels:
-    app: mi-app
+  name: app-with-two-containers
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
-      app: mi-app
+      app: dual-container-app
   template:
     metadata:
       labels:
-        app: mi-app
+        app: dual-container-app
     spec:
       containers:
-        - name: mi-app
-          image: lucasoli13/kc-cicd:latest
-          ports:
-            - containerPort: 3000
+      - name: node-app
+        image: lucasoli13/kc-cicd:latest
+        ports:
+        - containerPort: 3000
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
