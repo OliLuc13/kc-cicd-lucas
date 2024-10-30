@@ -1,23 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-with-two-containers
+  name: suma-app
+  labels:
+    app: suma-app
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
-      app: dual-container-app
+      app: suma-app
   template:
     metadata:
       labels:
-        app: dual-container-app
+        app: suma-app
     spec:
       containers:
-      - name: node-app
-        image: lucasoli13/kc-cicd:latest
+      - name: suma-container
+        image: node:latest
         ports:
         - containerPort: 3000
-      - name: nginx
-        image: nginx:latest
-        ports:
-        - containerPort: 80
+        volumeMounts:
+          - mountPath: /app
+            name: app-volume
+        command: ["node", "/app/index.js"]
+      volumes:
+        - name: app-volume
+          hostPath:
+            path: /mnt/data/index.js
+            type: File
