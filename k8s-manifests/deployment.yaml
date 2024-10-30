@@ -26,5 +26,5 @@ spec:
       volumes:
         - name: app-volume
           hostPath:
-            path: index.js
+            path: /mnt/data/index.js
             type: File
