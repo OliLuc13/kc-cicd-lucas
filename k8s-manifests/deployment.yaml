@@ -20,11 +20,12 @@ spec:
         ports:
         - containerPort: 3000
         volumeMounts:
-          - mountPath: /app
-            name: app-volume
+          - mountPath: /app/index.js
+            name: app-code
+            subPath: index.js
         command: ["node", "/app/index.js"]
       volumes:
-        - name: app-volume
-          hostPath:
-            path: /mnt/data/index.js
-            type: File
+        - name: app-code
+          configMap:
+            name: app-code
+
