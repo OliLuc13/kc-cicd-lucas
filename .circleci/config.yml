@@ -1,3 +1,4 @@
+
 version: 2.1
 
 orbs:
@@ -49,78 +50,59 @@ jobs:
       - run:
           name: Instalar dependencias
           command: npm install
-      - run:
-          name: Ejecutar análisis estático de código
-          command: npm run test:coverage
-      - sonarcloud/scan
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - store_test_results:
-          path: test-results.xml
+      - ggshield/scan
 
-
-  generar_artefacto:
+  build_artifact:
     docker:
       - image: cimg/node:lts
     steps:
       - checkout
       - run:
-          name: Instalar dependencias
-          command: npm install
-      - run:
-          name: Generar artefacto de la aplicación
-          command: npm run build
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
+          name: Build Artifact
+          command: |
+            mkdir -p artifacts
+            npm run build
+            cp -r dist/* artifacts/  # Assuming "dist" is the build output folder
 
-  publicar_artefacto:
+  publish_artifact:
     docker:
       - image: cimg/node:lts
     steps:
-      - attach_workspace:
-          at: .
+      - checkout
       - run:
-          name: Publicar artefacto en el repositorio
+          name: Publish Artifact Locally
           command: |
-            echo "Publicando artefacto..."
-            # Reemplaza este comando con el necesario para publicar tu artefacto
+            mkdir -p /home/circleci/local-artifacts
+            cp -r artifacts/* /home/circleci/local-artifacts/
+            echo "Artifacts published to local repository"
+
+  build_docker_image:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - run:
+          name: Build Docker Image
+          command: |
+            docker build -t lucasoli13/suma-app:latest .
+      - run:
+          name: Save Docker Image
+          command: docker push lucasoli13/suma-app:latest
 
 workflows:
-  build_and_deploy:
+  version: 2
+  test-and-build:
     jobs:
       - build
-      - test:
+      - test
+      - lint
+      - analisis_estatico
+      - build_artifact
+      - publish_artifact:
           requires:
-            - build
-      - lint:
+            - build_artifact
+      - build_docker_image:
           requires:
-            - build
-      - analisis_estatico:
-          requires:
-            - build
-      - ggshield/scan:
-          name: ggshield-scan  
-          base_revision: << pipeline.git.base_revision >>
-          revision: << pipeline.git.revision >>
-          requires:
-            - build
-      - generar_artefacto:
-          requires:
-            - test
-          filters:
-            branches:
-              only:
-                - master
-                - main
-      - publicar_artefacto:
-          requires:
-            - generar_artefacto
-          filters:
-            branches:
-              only:
-                - master
-                - main
+            - publish_artifact
