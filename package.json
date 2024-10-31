@@ -11,7 +11,7 @@
     "coverage": "jest --coverage",
     "test:coverage": "npm run coverage"
   },
-  "author": "Tu Nombre",
+  "author": "Lucas Olivieri",
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
