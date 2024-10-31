@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: suma-app-deployment
+spec:
+  replicas: 2  # Número de réplicas
+  selector:
+    matchLabels:
+      app: suma-app
+  template:
+    metadata:
+      labels:
+        app: suma-app
+    spec:
+      containers:
+      - name: suma-app
+        image: lucasoli13/suma-app:latest
+        ports:
+        - containerPort: 3000  # Puerto expuesto en Dockerfile
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: suma-app-service
+spec:
+  selector:
+    app: suma-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
