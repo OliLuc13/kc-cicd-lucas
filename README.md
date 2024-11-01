@@ -1,35 +1,14 @@
-# Mi Aplicación de Ejemplo
+# CICD - Entregable practica final
 
-Esta es una aplicación Node.js sencilla para probar un pipeline de CI en CircleCI.
+El resumen del trabajo realizado se puede ver debajo:
 
-## Scripts Disponibles
-
-- `npm start`: Ejecuta la aplicación.
-- `npm test`: Ejecuta los tests utilizando Jest y genera un informe de cobertura.
-- `npm run lint`: Ejecuta ESLint para comprobar el código.
-- `npm run build`: Simula el proceso de construcción de la aplicación.
-- `npm run coverage`: Genera el informe de cobertura de los tests.
-
-## Instrucciones
-
-1. **Instalar dependencias**:
-
-   ```bash
-   npm install
-2. **Ejecutar la aplicacion**:
-
-   ```bash
-   npm start
-3. **Ejecutar los tests:**:
-
-   ```bash
-   npm test
-4. **Ejecutar el linting:**:
-
-   ```bash
-   npm run lint
-5. **Construir la aplicación:**:
-
-   ```bash
-  npm run build
-      
+1. El enlace al repositorio de GitHub donde se encuentra el código de la aplicación. - https://github.com/OliLuc13/kc-cicd-lucas.git
+2. El enlace al repositorio de artefactos donde se encuentra el artefacto de la aplicación. - https://hub.docker.com/r/lucasoli13/suma-app
+3. El fichero de configuración del pipeline de CI/CD. - Adjunto a este repositorio
+4. Screenshots del pipeline de CI/CD. - Adjunto a este repositorio
+5. Los manifestos de Kubernetes para el despliegue de la aplicación. - Adjunto a este repositorio
+6. Enlace o screenshot de la aplicación desplegada. - Adjunto a este repositorio
+7. Enlace o screenshot del proyecto en ArgoCD. - Adjunto a este repositorio
+8. Enlace o screenshot del proyecto en SonarCloud. - Adjunto a este repositorio
+9. Enlace o screenshot del proyecto en Snyk o GitGuardian. - Adjunto a este repositorio
+10. Enlace a un vídeo de Youtube donde se explique la práctica.
