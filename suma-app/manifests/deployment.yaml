@@ -47,7 +47,7 @@ spec:
       paths:
       - backend:
           service:
-            name: suma-app
+            name: suma-app-service
             port:
               number: 80
         path: /suma-app/manifests
