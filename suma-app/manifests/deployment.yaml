@@ -15,6 +15,7 @@ spec:
       containers:
       - name: suma-app
         image: lucasoli13/suma-app:latest
+        command: ["sleep", "infinity"]
         ports:
         - containerPort: 3000  # Puerto expuesto en Dockerfile
 ---
