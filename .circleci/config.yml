@@ -60,6 +60,18 @@ jobs:
       - store_test_results:
           path: test-results.xml
 
+  build_docker_image:
+    docker:
+      - image: cimg/node:lts
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - run:
+          name: Build Docker image
+          command: |
+            docker build -t suma-app -t lucasoli13/suma-app:latest .
+            docker push lucasoli13/suma-app:latest
 
   generar_artefacto:
     docker:
