@@ -122,7 +122,7 @@ workflows:
             - build
       -build_docker_image:
           requires:
-            - test
+            - build
       - generar_artefacto:
           requires:
             - test
