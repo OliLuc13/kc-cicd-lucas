@@ -120,6 +120,9 @@ workflows:
           revision: << pipeline.git.revision >>
           requires:
             - build
+      -build_docker_image:
+          requires:
+            - test
       - generar_artefacto:
           requires:
             - test
