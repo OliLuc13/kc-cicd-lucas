@@ -11,4 +11,4 @@ El resumen del trabajo realizado se puede ver debajo:
 7. Enlace o screenshot del proyecto en ArgoCD. - Adjunto a este repositorio
 8. Enlace o screenshot del proyecto en SonarCloud. - Adjunto a este repositorio
 9. Enlace o screenshot del proyecto en Snyk o GitGuardian. - Adjunto a este repositorio
-10. Enlace a un vídeo de Youtube donde se explique la práctica.
+10. Enlace a un vídeo de Youtube donde se explique la práctica. - https://youtu.be/NWLMaliJVvE
